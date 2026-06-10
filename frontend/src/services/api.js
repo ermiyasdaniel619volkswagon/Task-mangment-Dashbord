@@ -23,7 +23,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: "https://task-mangment-dashbord.vercel.app/api",
   withCredentials: true, // Instructs browser to attach cookies to every request automatically
 });
 
