@@ -18,7 +18,11 @@ const app = express();
 // );
 app.use(
   cors({
-    origin: ["http://localhost:5174", "http://localhost:5173"], // Add any ports your Vite/React uses
+    origin: [
+      "http://localhost:5174",
+      "http://localhost:5173",
+      "https://task-mangment-dashbord-tzr4.vercel.app",
+    ], // Add any ports your Vite/React uses
     credentials: true, // This is required for cookies/withCredentials
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
