@@ -1,4 +1,3 @@
-
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -42,12 +41,10 @@ export const register = async (req, res) => {
       email: user.email,
     });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message: "Server registry failure profile creation halted",
-        error: err.message,
-      });
+    res.status(500).json({
+      message: "Server registry failure profile creation halted",
+      error: err.message,
+    });
   }
 };
 
@@ -57,20 +54,16 @@ export const login = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res
-        .status(400)
-        .json({
-          message: "Incorrect authentication identity credentials match",
-        });
+      return res.status(400).json({
+        message: "Incorrect authentication identity credentials match",
+      });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res
-        .status(400)
-        .json({
-          message: "Incorrect authentication identity credentials match",
-        });
+      return res.status(400).json({
+        message: "Incorrect authentication identity credentials match",
+      });
     }
 
     sendTokenCookie(res, 200, user._id, {
@@ -79,12 +72,22 @@ export const login = async (req, res) => {
       email: user.email,
     });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message: "Server core processing token verification issue",
-        error: err.message,
-      });
+    res.status(500).json({
+      message: "Server core processing token verification issue",
+      error: err.message,
+    });
+  }
+};
+// Controller to fetch all users (excluding passwords for security)
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({
+      message: "Server error fetching user directory list",
+      error: err.message,
+    });
   }
 };
 
