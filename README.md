@@ -4,6 +4,17 @@ This project focuses on a task management dashboard where users can log into the
 
 Installation
 Clone the repository.
+git clone https://github.com/ermiyasdaniel619volkswagon/Task-mangment-Dashbord
 Install dependencies.
+npm i
 Set up environment variables.
+  1 cd backend 
+  mkdir 
+  2 touch .env
+   3 add  your env 
+   PORT= your PORT
+   MONGO_URI= your MONGO_URI 
+JWT_SECRET= your JWT_SECRET
+
+
 Run the application locally.

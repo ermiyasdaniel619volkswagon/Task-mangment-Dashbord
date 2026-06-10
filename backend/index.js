@@ -1,21 +1,40 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import cookieParser from "cookie-parser"; // 1. Import cookie parser
 import "dotenv/config";
+
+import authRoutes from "./routes/authRoutes.js";
+import taskRoutes from "./routes/taskRoutes.js";
 
 const app = express();
 
-// Cross-Origin and JSON payload parsers
-app.use(cors());
+// 2. Update CORS to handle cookies securely
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173", // Your frontend local address
+//     credentials: true,
+//   }),
+// );
+app.use(
+  cors({
+    origin: ["http://localhost:5174", "http://localhost:5173"], // Add any ports your Vite/React uses
+    credentials: true, // This is required for cookies/withCredentials
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 app.use(express.json());
+app.use(cookieParser()); // 3. Mount cookie parser middleware
 
-// Database connection lifecycle
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected successfully "))
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .then(() => console.log("MongoDB connected successfully via ES Modules"))
+  .catch((err) => console.error("MongoDB connection cluster error:", err));
 
-// Initial structural check route
+app.use("/api/auth", authRoutes);
+app.use("/api/tasks", taskRoutes);
+
 app.get("/", (req, res) => {
   res.send("Task Management API engine is active...");
 });
