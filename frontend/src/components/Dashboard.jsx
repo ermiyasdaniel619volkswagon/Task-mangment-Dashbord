@@ -22,6 +22,7 @@ export default function Dashboard({ onLogout }) {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("Development");
   const [priority, setPriority] = useState("Medium");
   const [dueDate, setDueDate] = useState("");
 
@@ -51,13 +52,49 @@ export default function Dashboard({ onLogout }) {
   ).length;
   const completionRate =
     stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
+  const getUrgency = (dueDate) => {
+    const today = new Date();
 
+    const due = new Date(dueDate);
+
+    const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
+
+    if (diffDays <= 1)
+      return {
+        label: "Critical",
+        className: "bg-red-100 text-red-700",
+      };
+
+    if (diffDays <= 3)
+      return {
+        label: "Urgent",
+        className: "bg-orange-100 text-orange-700",
+      };
+
+    if (diffDays <= 7)
+      return {
+        label: "Normal",
+        className: "bg-blue-100 text-blue-700",
+      };
+
+    return {
+      label: "Planned",
+      className: "bg-green-100 text-green-700",
+    };
+  };
   const handleCreateTask = async (e) => {
     e.preventDefault();
     try {
-      await API.post("/tasks", { title, description, priority, dueDate });
+      await API.post("/tasks", {
+        title,
+        description,
+        category,
+        priority,
+        dueDate,
+      });
       setTitle("");
       setDescription("");
+      setCategory("Development");
       setPriority("Medium");
       setDueDate("");
       loadData();
@@ -196,6 +233,24 @@ export default function Dashboard({ onLogout }) {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+                  Category
+                </label>
+
+                <select
+                  className="w-full rounded-lg border border-gray-300 p-2.5"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                >
+                  <option value="Development">Development</option>
+                  <option value="Testing">Testing</option>
+                  <option value="Database">Database</option>
+                  <option value="Deployment">Deployment</option>
+                  <option value="Design">Design</option>
+                  <option value="Documentation">Documentation</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
                   Priority
                 </label>
                 <select
@@ -302,6 +357,16 @@ export default function Dashboard({ onLogout }) {
                         }`}
                       >
                         {task.priority}
+                      </span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700">
+                        {task.category}
+                      </span>
+                      <span
+                        className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                          getUrgency(task.dueDate).className
+                        }`}
+                      >
+                        {getUrgency(task.dueDate).label}
                       </span>
                     </div>
                     <p
