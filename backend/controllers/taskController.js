@@ -29,12 +29,14 @@ export const getTasks = async (req, res) => {
 
 export const createTask = async (req, res) => {
   try {
-    const { title, description, priority, status, dueDate } = req.body;
+    const { title, description, category, priority, status, dueDate } =
+      req.body;
 
     const newTask = new Task({
       userId: req.user,
       title,
       description,
+      category,
       priority,
       status,
       dueDate,
@@ -54,7 +56,8 @@ export const createTask = async (req, res) => {
 
 export const updateTask = async (req, res) => {
   try {
-    const { title, description, priority, status, dueDate } = req.body;
+    const { title, description, category, priority, status, dueDate } =
+      req.body;
     let task = await Task.findById(req.params.id);
 
     if (!task)
@@ -68,7 +71,7 @@ export const updateTask = async (req, res) => {
 
     task = await Task.findByIdAndUpdate(
       req.params.id,
-      { $set: { title, description, priority, status, dueDate } },
+      { $set: { title, description, category, priority, status, dueDate } },
       { new: true },
     );
 
