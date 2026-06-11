@@ -19,7 +19,7 @@ export default function Dashboard({ onLogout }) {
   const [search, setSearch] = useState("");
   const [filterPriority, setFilterPriority] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
-
+  const [filterCategory, setFilterCategory] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("Development");
@@ -35,7 +35,7 @@ export default function Dashboard({ onLogout }) {
       if (search) params.search = search;
       if (filterPriority) params.priority = filterPriority;
       if (filterStatus) params.status = filterStatus;
-
+      if (filterCategory) params.category = filterCategory;
       const tasksRes = await API.get("/tasks", { params });
       setTasks(tasksRes.data);
     } catch (err) {
@@ -45,7 +45,7 @@ export default function Dashboard({ onLogout }) {
 
   useEffect(() => {
     loadData();
-  }, [search, filterPriority, filterStatus]);
+  }, [search, filterPriority, filterStatus, filterCategory]);
 
   const highPriorityCount = tasks.filter(
     (t) => t.priority === "High" && t.status !== "Completed",
@@ -320,6 +320,25 @@ export default function Dashboard({ onLogout }) {
                 <option value="">All Statuses</option>
                 <option value="Pending">Pending</option>
                 <option value="Completed">Completed</option>
+              </select>
+              <select
+                className="rounded-lg border border-gray-300 p-2 text-xs bg-white"
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+              >
+                <option value="">All Categories</option>
+
+                <option value="Development">Development</option>
+
+                <option value="Testing">Testing</option>
+
+                <option value="Database">Database</option>
+
+                <option value="Deployment">Deployment</option>
+
+                <option value="Design">Design</option>
+
+                <option value="Documentation">Documentation</option>
               </select>
             </div>
           </div>

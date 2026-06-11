@@ -2,11 +2,12 @@ import Task from "../models/Task.js";
 
 export const getTasks = async (req, res) => {
   try {
-    const { search, priority, status } = req.query;
+    const { search, priority, status, category } = req.query;
     let query = { userId: req.user };
 
     if (priority) query.priority = priority;
     if (status) query.status = status;
+    if (category) query.category = category;
 
     if (search) {
       query.$or = [
@@ -16,14 +17,15 @@ export const getTasks = async (req, res) => {
     }
 
     const tasks = await Task.find(query).sort({ dueDate: 1 });
+
+    console.log("FOUND TASKS:", tasks.length);
+    console.log(tasks);
     res.json(tasks);
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message: "Database fetch fault mapping parameters execution error",
-        error: err.message,
-      });
+    res.status(500).json({
+      message: "Database fetch fault mapping parameters execution error",
+      error: err.message,
+    });
   }
 };
 
@@ -45,12 +47,10 @@ export const createTask = async (req, res) => {
     const savedTask = await newTask.save();
     res.status(201).json(savedTask);
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message: "Task writing stream creation instance failed",
-        error: err.message,
-      });
+    res.status(500).json({
+      message: "Task writing stream creation instance failed",
+      error: err.message,
+    });
   }
 };
 
@@ -77,12 +77,10 @@ export const updateTask = async (req, res) => {
 
     res.json(task);
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message: "Task change request updating sequence break",
-        error: err.message,
-      });
+    res.status(500).json({
+      message: "Task change request updating sequence break",
+      error: err.message,
+    });
   }
 };
 
@@ -102,12 +100,10 @@ export const deleteTask = async (req, res) => {
     await Task.findByIdAndDelete(req.params.id);
     res.json({ message: "Document removed from storage schema successfully" });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message: "Task erasure pipeline error instance processing crash",
-        error: err.message,
-      });
+    res.status(500).json({
+      message: "Task erasure pipeline error instance processing crash",
+      error: err.message,
+    });
   }
 };
 
@@ -123,11 +119,9 @@ export const getTaskStats = async (req, res) => {
 
     res.json({ total, pending, completed });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message: "Metrics calculation compilation parsing process error",
-        error: err.message,
-      });
+    res.status(500).json({
+      message: "Metrics calculation compilation parsing process error",
+      error: err.message,
+    });
   }
 };
