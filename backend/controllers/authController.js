@@ -78,18 +78,6 @@ export const login = async (req, res) => {
     });
   }
 };
-// Controller to fetch all users (excluding passwords for security)
-export const getAllUsers = async (req, res) => {
-  try {
-    const users = await User.find().select("-password");
-    res.status(200).json(users);
-  } catch (err) {
-    res.status(500).json({
-      message: "Server error fetching user directory list",
-      error: err.message,
-    });
-  }
-};
 
 // Add a logout controller route to clear cookies easily
 export const logout = (req, res) => {
