@@ -21,6 +21,18 @@ const TaskSchema = new mongoose.Schema(
       enum: ["Low", "Medium", "High"],
       default: "Medium",
     },
+    category: {
+      type: String,
+      enum: [
+        "Development",
+        "Testing",
+        "Database",
+        "Deployment",
+        "Design",
+        "Documentation",
+      ],
+      default: "Development",
+    },
     status: {
       type: String,
       enum: ["Pending", "Completed"],
