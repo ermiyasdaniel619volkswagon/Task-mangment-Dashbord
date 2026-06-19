@@ -1,25 +1,50 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const UserSchema = new mongoose.Schema(
   {
-    name: {
+    fullName: { type: String, required: true },
+    email: { type: String, required: true, unique: true, lowercase: true },
+    password: { type: String, required: true },
+    role: {
       type: String,
-      required: true,
-      trim: true,
+      enum: ["Admin", "Employee"],
+      default: "Employee",
     },
-    email: {
+    department: { type: String, required: true },
+    jobRole: { type: String, required: true },
+    specialization: {
       type: String,
+      enum: [
+        "Development",
+        "Testing",
+        "Database",
+        "Deployment",
+        "Design",
+        "Documentation",
+      ],
       required: true,
-      unique: true,
-      trim: true,
-      lowercase: true,
     },
-    password: {
+    status: {
       type: String,
-      required: true,
+      enum: ["active", "inactive"],
+      default: "active",
     },
+    lastLoginAt: { type: Date, default: Date.now },
   },
   { timestamps: true },
 );
+
+// ✅ Correct pre-save hook – no 'next' argument, just async function
+UserSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+// Optional: compare method
+UserSchema.methods.matchPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
 
 export default mongoose.model("User", UserSchema);

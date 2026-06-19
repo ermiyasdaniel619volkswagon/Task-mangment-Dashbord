@@ -1,44 +1,42 @@
+
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import cookieParser from "cookie-parser"; // 1. Import cookie parser
+import db from "./config/db.js";
+import cookieParser from "cookie-parser";
 import "dotenv/config";
-
 import authRoutes from "./routes/authRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import employeeRoutes from "./routes/employeeRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js"; // ✅ Already imported
+import dataManagementRoutes from "./routes/dataManagementRoutes.js";
 
 const app = express();
 
-// 2. Update CORS to handle cookies securely
-// app.use(
-//   cors({
-//     origin: "http://localhost:5173", // Your frontend local address
-//     credentials: true,
-//   }),
-// );
 app.use(
   cors({
     origin: [
       "http://localhost:5174",
       "http://localhost:5173",
       "https://task-mangment-dashbord-tzr4.vercel.app",
-    ], // Add any ports your Vite/React uses
-    credentials: true, // This is required for cookies/withCredentials
+    ],
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  }),
+  })
 );
 app.use(express.json());
-app.use(cookieParser()); // 3. Mount cookie parser middleware
+app.use(cookieParser());
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected successfully via ES Modules"))
-  .catch((err) => console.error("MongoDB connection cluster error:", err));
+db();
 
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
-
+app.use("/api/admin", adminRoutes);
+app.use("/api/employee", employeeRoutes);
+app.use("/api/notifications", notificationRoutes); // ✅ Already mounted
+app.use("/api/admin/data", dataManagementRoutes);
 app.get("/", (req, res) => {
   res.send("Task Management API engine is active...");
 });

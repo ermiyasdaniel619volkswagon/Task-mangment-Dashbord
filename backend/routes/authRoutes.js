@@ -1,10 +1,24 @@
+
 import express from "express";
-import { register, login, logout } from "../controllers/authController.js";
+import {
+  loginUser,
+  getUserProfile,
+  logoutUser,
+  registerUser,
+  updateUserProfile,
+} from "../controllers/authController.js";
+import { protect } from "../middleware/authMiddleware.js";
+import { authLimiter, registerLimiter } from "../middleware/rateLimiter.js";
 
 const router = express.Router();
 
-router.post("/register", register);
-router.post("/login", login);
-router.post("/logout", logout);
+// Public routes
+router.post("/register", registerLimiter, registerUser);
+router.post("/login", authLimiter, loginUser);
+router.post("/logout", logoutUser); // Public, but no harm
+
+// Protected routes
+router.get("/profile", protect, getUserProfile);
+router.put("/profile", protect, updateUserProfile);
 
 export default router;
